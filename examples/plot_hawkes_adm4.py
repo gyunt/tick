@@ -15,31 +15,39 @@ Multi-dimensional Hawkes Processes. In `AISTATS (Vol. 31, pp. 641-649)
 <http://www.jmlr.org/proceedings/papers/v31/zhou13a.pdf>`_.
 """
 
+import matplotlib
 import numpy as np
-
-from tick.plot import plot_hawkes_kernel_norms
 from tick.hawkes import HawkesADM4, SimuHawkesExpKernels, SimuHawkesMulti
+from tick.plot import plot_hawkes_kernel_norms
 
-end_time = 10000
-n_realizations = 5
-decay = 3.
+matplotlib.use('qt5agg')
 
-baseline = np.ones(6) * .03
-adjacency = np.zeros((6, 6))
-adjacency[2:, 2:] = np.ones((4, 4)) * 0.1
-adjacency[:3, :3] = np.ones((3, 3)) * 0.15
 
-hawkes_exp_kernels = SimuHawkesExpKernels(adjacency=adjacency, decays=decay,
-                                          baseline=baseline, end_time=end_time,
-                                          verbose=False, seed=1039)
+def main():
+    end_time = 10000
+    n_realizations = 5
+    decay = 3.
 
-multi = SimuHawkesMulti(hawkes_exp_kernels, n_simulations=n_realizations)
+    baseline = np.ones(6) * .03
+    adjacency = np.zeros((6, 6))
+    adjacency[2:, 2:] = np.ones((4, 4)) * 0.1
+    adjacency[:3, :3] = np.ones((3, 3)) * 0.15
 
-multi.end_time = [(i + 1) / n_realizations * end_time
-                  for i in range(n_realizations)]
-multi.simulate()
+    hawkes_exp_kernels = SimuHawkesExpKernels(adjacency=adjacency, decays=decay,
+                                              baseline=baseline, end_time=end_time,
+                                              verbose=False, seed=1039)
 
-learner = HawkesADM4(decay)
-learner.fit(multi.timestamps)
+    multi = SimuHawkesMulti(hawkes_exp_kernels, n_simulations=n_realizations)
 
-plot_hawkes_kernel_norms(learner)
+    multi.end_time = [(i + 1) / n_realizations * end_time
+                      for i in range(n_realizations)]
+    multi.simulate()
+
+    learner = HawkesADM4(decay)
+    learner.fit(multi.timestamps)
+
+    plot_hawkes_kernel_norms(learner)
+
+
+if __name__ == "__main__":
+    main()
