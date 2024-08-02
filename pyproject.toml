@@ -17,6 +17,7 @@ pandas = "^2.2.2"
 dill = "^0.3.8"
 packaging = "^24.1"
 pyqt5 = "^5.15.11"
+statsmodels = "^0.14.2"
 
 
 [build-system]
