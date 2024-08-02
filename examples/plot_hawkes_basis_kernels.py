@@ -17,11 +17,15 @@ It could have been more precise if end_time or kernel_size was increased.
 """
 
 import itertools
-import numpy as np
-import matplotlib.pyplot as plt
 
-from tick.plot import plot_basis_kernels, plot_hawkes_kernels
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+
 from tick.hawkes import SimuHawkes, HawkesKernelTimeFunc, HawkesBasisKernels
+from tick.plot import plot_basis_kernels, plot_hawkes_kernels
+
+matplotlib.use("qt5agg")
 
 end_time = 1e9
 C = 1e-3
@@ -57,7 +61,6 @@ for i, j in itertools.product(range(2), repeat=2):
 hawkes.end_time = end_time
 hawkes.simulate()
 
-
 #############################################################################
 # Fit
 #############################################################################
@@ -73,7 +76,6 @@ em = HawkesBasisKernels(kernel_support, n_basis=n_basis,
                         kernel_size=kernel_size, C=C, n_threads=4,
                         max_iter=max_iter, verbose=False, ode_tol=1e-5)
 em.fit(timestamps)
-
 
 #############################################################################
 # Plot

@@ -19,7 +19,9 @@ from tick.hawkes import (
 from tick.hawkes import SimuHawkesExpKernels  # NOQA
 from tick.hawkes import HawkesExpKern  # NOQA
 from tick.plot import plot_point_process, qq_plots
+import matplotlib
 
+matplotlib.use('qt5agg')
 
 ##########################################################################
 # simulate
@@ -40,7 +42,6 @@ model = Simulator(
 model.track_intensity(0.1)
 model.simulate()
 
-
 ##########################################################################
 # fit
 ##########################################################################
@@ -54,7 +55,6 @@ if Fitter == HawkesSumExpKern:
         kwargs['elastic_net_ratio'] = 0.8
 learner = Fitter(decays=decays, **kwargs)
 learner.fit(timestamps)
-
 
 ##########################################################################
 # plot intensities
@@ -89,9 +89,9 @@ if show:
 
 
 def simulated_v_estimated_qq_plots(
-        model,
-        learner,
-        show=True,
+    model,
+    learner,
+    show=True,
 ):
     fig, ax_list = plt.subplots(2, 1, figsize=(10, 6))
     timestamps = model.timestamps

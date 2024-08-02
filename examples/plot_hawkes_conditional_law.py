@@ -16,11 +16,14 @@ non-parametric estimation. `arXiv preprint arXiv:1401.0903`_.
 .. _arXiv preprint arXiv:1401.0903: https://arxiv.org/pdf/1401.0903.pdf
 """
 
-import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 
 from tick.hawkes import SimuHawkes, HawkesKernelPowerLaw, HawkesConditionalLaw
 from tick.plot import plot_hawkes_kernels
+
+matplotlib.use("qt5agg")
 
 multiplier = np.array([0.012, 0.008, 0.004, 0.005])
 cutoff = 0.0005

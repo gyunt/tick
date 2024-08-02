@@ -16,13 +16,16 @@ A nonparametric EM algorithm for multiscale Hawkes processes.
 .. _preprint, 1-16: http://paleo.sscnet.ucla.edu/Lewis-Molher-EM_Preprint.pdf
 """
 
-import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 
+from tick.base import TimeFunction
 from tick.hawkes import (SimuHawkes, HawkesKernelTimeFunc, HawkesKernelExp,
                          HawkesEM)
-from tick.base import TimeFunction
 from tick.plot import plot_hawkes_kernels
+
+matplotlib.use("qt5agg")
 
 run_time = 30000
 

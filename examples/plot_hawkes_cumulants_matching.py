@@ -16,21 +16,27 @@ cumulants.
 
 .. _In International Conference on Machine Learning (pp. 1-10): http://proceedings.mlr.press/v70/achab17a.html
 """
+import matplotlib
+import numpy as np
+
+from tick.hawkes import (HawkesCumulantMatchingTf, SimuHawkesExpKernels,
+                         SimuHawkesMulti)
+from tick.plot import plot_hawkes_kernel_norms
+
+matplotlib.use("qt5agg")
 
 skip = True
 try:
     import tensorflow
+
     skip = False
 except ImportError:
     print("tensorflow not found, skipping HawkesCumulantMatching")
 
-if not skip:
 
-    import numpy as np
-
-    from tick.hawkes import (HawkesCumulantMatchingTf, SimuHawkesExpKernels,
-                             SimuHawkesMulti)
-    from tick.plot import plot_hawkes_kernel_norms
+def main():
+    if skip:
+        return
 
     np.random.seed(7168)
 
@@ -63,3 +69,7 @@ if not skip:
 
     nphc.fit(multi.timestamps)
     plot_hawkes_kernel_norms(nphc)
+
+
+if __name__ == "__main__":
+    main()

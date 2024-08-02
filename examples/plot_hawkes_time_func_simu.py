@@ -6,12 +6,15 @@ Hawkes simulation with exotic kernels
 Simulation of Hawkes processes with usage of custom kernels
 """
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
 from tick.base import TimeFunction
 from tick.hawkes import SimuHawkes, HawkesKernelExp, HawkesKernelTimeFunc
 from tick.plot import plot_point_process, qq_plots as _qq_plots
+
+matplotlib.use("qt5agg")
 
 ###############################################################################
 # instantiate
@@ -32,7 +35,6 @@ model = SimuHawkes(
     kernels=[[kernel_1, kernel_1], [HawkesKernelExp(.07, 4), kernel_2]],
     baseline=[1.5, 1.5], verbose=False, seed=23983)
 
-
 ###############################################################################
 # simulate
 ###############################################################################
@@ -41,7 +43,6 @@ dt = 0.01
 model.track_intensity(dt)
 model.end_time = run_time
 model.simulate()
-
 
 ###############################################################################
 # plot

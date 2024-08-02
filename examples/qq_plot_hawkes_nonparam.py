@@ -1,10 +1,12 @@
-import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 
-from tick.hawkes import (SimuHawkes, HawkesKernelTimeFunc, HawkesKernelExp,
-                         HawkesEM)
 from tick.base import TimeFunction
+from tick.hawkes import (SimuHawkes, HawkesKernelTimeFunc, HawkesKernelExp)
 from tick.plot import qq_plots
+
+matplotlib.use("qt5agg")
 
 run_time = 30000
 

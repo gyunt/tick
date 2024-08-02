@@ -1,15 +1,19 @@
+import matplotlib
+
 from tick.hawkes import SimuHawkesExpKernels
 from tick.plot import qq_plots
 
+matplotlib.use("qt5agg")
+
 
 def simulate_hawkes_exp_kern(
-        decays=[[1., 1.5], [0.1, 0.5]],
-        baseline=[0.12, 0.07],
-        adjacency=[[.1, .4], [.2, 0.5]],
-        end_time=3000,
-        max_jumps=1000,
-        verbose=True,
-        force_simulation=False,
+    decays=[[1., 1.5], [0.1, 0.5]],
+    baseline=[0.12, 0.07],
+    adjacency=[[.1, .4], [.2, 0.5]],
+    end_time=3000,
+    max_jumps=1000,
+    verbose=True,
+    force_simulation=False,
 ):
     model = SimuHawkesExpKernels(
         adjacency=adjacency,

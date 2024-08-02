@@ -1,15 +1,19 @@
+import matplotlib
+
 from tick.hawkes import SimuHawkesSumExpKernels
 from tick.plot import qq_plots
 
+matplotlib.use("qt5agg")
+
 
 def simulate_hawkes_sum_exp_kern(
-        decays=[0.1, 0.5, 1.],
-        baseline=[0.12, 0.07],
-        adjacency=[[[0, .1, .4], [.2, 0., .2]], [[0, 0, 0], [.6, .3, 0]]],
-        end_time=1000,
-        max_jumps=5000,
-        verbose=True,
-        force_simulation=False,
+    decays=[0.1, 0.5, 1.],
+    baseline=[0.12, 0.07],
+    adjacency=[[[0, .1, .4], [.2, 0., .2]], [[0, 0, 0], [.6, .3, 0]]],
+    end_time=1000,
+    max_jumps=5000,
+    verbose=True,
+    force_simulation=False,
 ):
     model = SimuHawkesSumExpKernels(
         adjacency=adjacency,
@@ -31,11 +35,11 @@ def plot(model):
 
 
 def model_from_timestamps(
-        timestamps,
-        decays=[0.1, 0.5, 1.],
-        baseline=[0.12, 0.07],
-        adjacency=[[[0, .1, .4], [.2, 0., .2]], [[0, 0, 0], [.6, .3, 0]]],
-        end_time=1000,
+    timestamps,
+    decays=[0.1, 0.5, 1.],
+    baseline=[0.12, 0.07],
+    adjacency=[[[0, .1, .4], [.2, 0., .2]], [[0, 0, 0], [.6, .3, 0]]],
+    end_time=1000,
 ):
     model = SimuHawkesSumExpKernels(
         adjacency=adjacency,
@@ -49,17 +53,17 @@ def model_from_timestamps(
 
 
 def round_trip(
-        simu_decays=[0.1, 0.5, 1.],
-        simu_baseline=[0.12, 0.07],
-        simu_adjacency=[[[0, .1, .4], [.2, 0., .2]], [[0, 0, 0], [.6, .3, 0]]],
-        gfit_decays=[0.2, 0.6, 1.],
-        gfit_baseline=[0.12, 0.07],
-        gfit_adjacency=[[[0, .1, .8], [.2, 0.8, .2]],
-                        [[0.3, 0.3, 0], [.6, .3, 0]]],
-        end_time=1000,
-        max_jumps=5000,
-        verbose=True,
-        force_simulation=False,
+    simu_decays=[0.1, 0.5, 1.],
+    simu_baseline=[0.12, 0.07],
+    simu_adjacency=[[[0, .1, .4], [.2, 0., .2]], [[0, 0, 0], [.6, .3, 0]]],
+    gfit_decays=[0.2, 0.6, 1.],
+    gfit_baseline=[0.12, 0.07],
+    gfit_adjacency=[[[0, .1, .8], [.2, 0.8, .2]],
+                    [[0.3, 0.3, 0], [.6, .3, 0]]],
+    end_time=1000,
+    max_jumps=5000,
+    verbose=True,
+    force_simulation=False,
 ):
     """
     If any of `gfit_` parameters do not match with the `simu_` parameters,
