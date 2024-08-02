@@ -22,11 +22,14 @@ triggering (resp. preventing) market orders at the ask (resp. at the bid).
 .. _tick-datasets: https://github.com/X-DataInitiative/tick-datasets
 .. _pp.1179-1201: http://www.tandfonline.com/doi/abs/10.1080/14697688.2015.1123287
 """
+import matplotlib
 import numpy as np
 
 from tick.dataset import fetch_hawkes_bund_data
 from tick.hawkes import HawkesConditionalLaw
 from tick.plot import plot_hawkes_kernel_norms
+
+matplotlib.use("qt5agg")
 
 timestamps_list = fetch_hawkes_bund_data()
 
