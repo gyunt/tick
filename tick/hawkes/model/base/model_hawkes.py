@@ -1,7 +1,8 @@
 # License: BSD 3 clause
 
 import numpy as np
-from scipy.sparse import sputils, csr_matrix
+from scipy.sparse import _sputils as sputils
+from scipy.sparse import csr_matrix
 
 from tick.base_model import N_CALLS_LOSS, PASS_OVER_DATA
 from tick.base_model.model_first_order import ModelFirstOrder
@@ -159,7 +160,7 @@ class ModelHawkes(ModelFirstOrder):
         n_baselines = self.n_nodes
         # number of alphas per dimension
         if isinstance(
-                self._model,
+            self._model,
             (ModelHawkesSumExpKernLeastSq, ModelHawkesSumExpKernLogLik)):
             n_alphas_i = self.n_nodes * len(self.decays)
         else:
@@ -196,7 +197,7 @@ class ModelHawkes(ModelFirstOrder):
 
         # In these two models, hessian does not depend on x
         if isinstance(
-                self._model,
+            self._model,
             (ModelHawkesSumExpKernLeastSq, ModelHawkesExpKernLeastSq)):
             self._model.hessian(data)
         else:

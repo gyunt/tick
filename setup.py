@@ -33,7 +33,6 @@ from distutils import sysconfig as distconfig
 # deprecated!
 
 
-
 from packaging import version
 
 force_blas = False
@@ -55,24 +54,24 @@ if "--force-blas" in sys.argv:
 # debug_flags = ['DEBUG_C_ARRAY', 'DEBUG_ARRAY', 'DEBUG_COSTLY_THROW',
 #                'DEBUG_SHAREDARRAY', 'DEBUG_VARRAY', 'DEBUG_VERBOSE']
 
-TICK_DEBUG=1
+TICK_DEBUG = 1
 # allow disable debug
 if os.environ.get('TICK_DEBUG') is not None:
-    TICK_DEBUG=os.environ['TICK_DEBUG']
+    TICK_DEBUG = os.environ['TICK_DEBUG']
 
-TICK_WERROR=1
+TICK_WERROR = 1
 # allow disable Werror
 if os.environ.get('TICK_WERROR') is not None:
-    TICK_WERROR=os.environ['TICK_WERROR']
+    TICK_WERROR = os.environ['TICK_WERROR']
 
 debug_flags = []
 
 if TICK_DEBUG == 1 or TICK_DEBUG == "1":
     debug_flags = ['DEBUG_COSTLY_THROW']
 
-TICK_CMAKE_GENERATOR=None
+TICK_CMAKE_GENERATOR = None
 if os.environ.get('TICK_CMAKE_GENERATOR') is not None:
-    TICK_CMAKE_GENERATOR=os.environ['TICK_CMAKE_GENERATOR']
+    TICK_CMAKE_GENERATOR = os.environ['TICK_CMAKE_GENERATOR']
 
 # If true, add compilation flags to use fast (but maybe inaccurate) math
 # See https://gcc.gnu.org/wiki/FloatingPointMath
@@ -119,7 +118,7 @@ try:
         numpy_include = np.get_numpy_include()
 
     # Determine if we have an available BLAS implementation
-    if force_blas: # activated with build --force-blas
+    if force_blas:  # activated with build --force-blas
         blas_info = get_info("blas_opt", 0)
     elif platform.system() == 'Windows':
         try:
@@ -160,7 +159,7 @@ if os.environ.get('TICK_NO_OPTS') is not None:
 # arrays
 sparse_indices_flag = "-DTICK_SPARSE_INDICES_INT32"
 try:
-    from scipy.sparse import sputils
+    from scipy.sparse import _sputils as sputils
 
     sparsearray_type = sputils.get_index_dtype()
 
@@ -204,9 +203,14 @@ if os.environ.get('PYVER') is not None:
 # Directory containing built .so files before they are moved either
 # in source (with build flag --inplace) or to site-packages (by install)
 # E.g. build/lib.macosx-10.11-x86_64-3.5
-build_dir = "build/lib.{}-{}"+PYVER_DBG
+build_dir = "build/lib.{}-cpython-{}" + PYVER_DBG
 build_dir = build_dir.format(distutils.util.get_platform(),
-                             ".".join(sys.version.split(".")[:2]))
+                             "".join(sys.version.split(".")[:2]))
+
+print("******************************")
+print("Building in directory: ", build_dir)
+print("******************************")
+
 
 class SwigExtension(Extension):
     """This only adds information about extension construction, useful for
@@ -218,13 +222,13 @@ class SwigExtension(Extension):
         self.module_ref = module_ref
         self.ext_name = ext_name
 
+
 class SwigPath:
     """Small class to handle module creation and check project structure
     """
 
     def __init__(self, module_path, extension_name):
         module_path = os.path.normpath(module_path)
-
 
         # Module C++ source directory (e.g. lib/cpp/tick/base)
         self.src = os.path.join(module_path, 'src')
@@ -301,8 +305,8 @@ def create_extension(extension_name, module_dir,
                               '-Ilib/include',
                               sparse_indices_flag,
                               '-std=c++11',
-                              '-O2', # -O3 is sometimes dangerous and has caused segfaults on Travis
-                              '-DNDEBUG', # some assertions fail without this (TODO tbh)
+                              '-O2',  # -O3 is sometimes dangerous and has caused segfaults on Travis
+                              '-DNDEBUG',  # some assertions fail without this (TODO tbh)
                               ]
     if TICK_DEBUG == 0 or TICK_DEBUG == "0":
         min_extra_compile_args.append("-g0")
@@ -338,7 +342,7 @@ def create_extension(extension_name, module_dir,
     define_macros.extend(blas_info.get("define_macros", []))
 
     if 'define_macros' in blas_info and \
-            any(key == 'HAVE_CBLAS' for key, _ in blas_info['define_macros']):
+        any(key == 'HAVE_CBLAS' for key, _ in blas_info['define_macros']):
         define_macros.append(('TICK_USE_CBLAS', None))
     if "libraries" in blas_info and "mkl_rt" in blas_info["libraries"]:
         define_macros.append(('TICK_USE_MKL', None))
@@ -346,13 +350,13 @@ def create_extension(extension_name, module_dir,
         if platform.system() != 'Windows':
             for lib_dir in blas_info["library_dirs"]:
                 extra_link_args.append(
-                    "-Wl,-rpath,"+ lib_dir
+                    "-Wl,-rpath," + lib_dir
                 )
             # if not Linux assume MacOS
             if platform.system() != 'Linux':
                 rel_path = os.path.relpath(lib_dir, swig_path.build)
                 if os.path.exists(rel_path):
-                    extra_link_args.append("-Wl,-rpath,@loader_path/"+ rel_path)
+                    extra_link_args.append("-Wl,-rpath,@loader_path/" + rel_path)
 
     if include_modules is None:
         include_modules = []
@@ -369,14 +373,14 @@ def create_extension(extension_name, module_dir,
         # On windows we need to use ".lib" rather than ".pyd"
         # when linking libs to other libs
         if platform.system() == 'Windows':
-            lib = os.path.join(build_dir, mod.build, "_"+mod.extension_name)
+            lib = os.path.join(build_dir, mod.build, "_" + mod.extension_name)
             lib += os.path.splitext(sysconfig.get_config_var("EXT_SUFFIX"))[0]
             libraries.append(lib)
         elif platform.system() == 'Linux':
             lib_dir = os.path.abspath(os.path.join(build_dir, mod.build))
-            extra_link_args.append("-L"+lib_dir)
-            extra_link_args.append("-Wl,-rpath,"+lib_dir)
-            extra_link_args.append("-l:"+mod.lib_filename)
+            extra_link_args.append("-L" + lib_dir)
+            extra_link_args.append("-Wl,-rpath," + lib_dir)
+            extra_link_args.append("-l:" + mod.lib_filename)
         else:
             extra_link_args.append(os.path.abspath(
                 os.path.join(build_dir, mod.build, mod.lib_filename)))
@@ -428,7 +432,7 @@ def create_extension(extension_name, module_dir,
     # see: https://github.com/python/cpython/blob/08bb8a41cc976343795bd0e241cd7388e9f44ad5/Lib/distutils/_msvccompiler.py#L467
     if platform.system() == 'Windows':
         implib = "/IMPLIB:" + os.path.abspath(
-            os.path.join(build_dir, swig_path.build, "_"+extension_name))
+            os.path.join(build_dir, swig_path.build, "_" + extension_name))
         implib += os.path.splitext(sysconfig.get_config_var("EXT_SUFFIX"))[0]
         extra_link_args.append(implib + ".lib")
 
@@ -530,9 +534,9 @@ linear_model_core_info = {
     "module_dir": "./tick/linear_model/",
     "extension_name": "linear_model",
     "include_modules": base_array_modules +
-    [
-      base_model_core.module_ref,
-    ]
+                       [
+                           base_model_core.module_ref,
+                       ]
 }
 linear_model_core = create_extension(**linear_model_core_info)
 
@@ -545,7 +549,7 @@ hawkes_simulation_extension_info = {
         "lib/cpp/hawkes/simulation/hawkes_kernels"
     ],
     "swig_files": [
-      "hawkes_simulation_module.i"
+        "hawkes_simulation_module.i"
     ],
     "module_dir": "./tick/hawkes/simulation/",
     "extension_name": "hawkes_simulation",
@@ -563,7 +567,7 @@ hawkes_model_extension_info = {
         "lib/cpp/hawkes/model/list_of_realizations",
     ],
     "swig_files": [
-      "hawkes_model_module.i"
+        "hawkes_model_module.i"
     ],
     "module_dir": "./tick/hawkes/model/",
     "extension_name": "hawkes_model",
@@ -578,15 +582,15 @@ hawkes_inference_extension_info = {
         "lib/cpp/hawkes/inference",
     ],
     "swig_files": [
-      "hawkes_inference_module.i"
+        "hawkes_inference_module.i"
     ],
     "module_dir": "./tick/hawkes/inference/",
     "extension_name": "hawkes_inference",
     "include_modules": base_array_modules +
-    [
-        base_model_core.module_ref,
-        hawkes_model_extension.module_ref,
-    ]
+                       [
+                           base_model_core.module_ref,
+                           hawkes_model_extension.module_ref,
+                       ]
 }
 hawkes_inference_extension = create_extension(**hawkes_inference_extension_info)
 
@@ -613,7 +617,7 @@ robust_extension_info = {
     "module_dir": "./tick/robust/",
     "extension_name": "robust",
     "include_modules": base_array_modules + [
-      base_model_core.module_ref,linear_model_core.module_ref]
+        base_model_core.module_ref, linear_model_core.module_ref]
 }
 robust_extension = create_extension(**robust_extension_info)
 
@@ -669,6 +673,7 @@ tick_modules = [
     prox_core, preprocessing_core,
     robust_extension, survival_extension, solver_core
 ]
+
 
 # Abstract class for tick-specific commands that need access to common build
 # directories
@@ -757,7 +762,6 @@ class BuildCPPTests(TickCommand):
         relpath = os.path.relpath(self.tick_dir, self.cpp_build_dir)
         cmake_exe = os.environ.get('TICK_CMAKE', 'cmake')
 
-
         cmake_cmd = [cmake_exe,
                      '-DTICK_REBUILD_LIBS=OFF',
                      '-DBENCHMARK=OFF',
@@ -776,7 +780,7 @@ class BuildCPPTests(TickCommand):
                 '-DTICK_LIB_{}={}'.format(mod.ext_name.upper(), full_path))
 
         if 'define_macros' in blas_info and \
-                any(key == 'HAVE_CBLAS' for key, _ in blas_info['define_macros']):
+            any(key == 'HAVE_CBLAS' for key, _ in blas_info['define_macros']):
             cmake_cmd.append('-DUSE_BLAS=ON')
 
         os.makedirs(os.path.join(self.cpp_build_dir, 'cpptest'), exist_ok=True)
@@ -833,6 +837,7 @@ class RunPyLint(TickCommand):
     def run():
         raise NotImplementedError('Running pylint from setup.py'
                                   'not supported yet')
+
 
 class RunPyTests(TickCommand):
     description = 'run tick Python tests'

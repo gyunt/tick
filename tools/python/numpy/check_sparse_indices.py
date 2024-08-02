@@ -4,14 +4,14 @@
 
 try:
     import numpy as np
-    from scipy.sparse import sputils
+    from scipy.sparse import _sputils as sputils
 
     sparsearray_type = sputils.get_index_dtype()
 
     if sparsearray_type == np.int64:
         print("-DTICK_SPARSE_INDICES_INT64")
     else:
-    	print("-DTICK_SPARSE_INDICES_INT32")
+        print("-DTICK_SPARSE_INDICES_INT32")
 except ImportError as e:
     if is_building_tick and numpy_available:
         print(e)
