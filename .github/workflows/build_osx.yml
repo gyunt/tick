@@ -1,0 +1,93 @@
+name: Build Tick on OSX
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  TICK_DEBUG: 0
+  TICK_WERROR: 0
+
+
+jobs:
+  build:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        os: [ macos-latest ]
+        python-version: [ '3.11' ]
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        architecture: x64
+
+    - name: Install Homebrew dependencies
+      run: |
+        brew update
+        brew install automake m4 swig
+
+    - name: info
+      run: |
+        python3 -V
+        clang -v
+        swig -version
+
+    - name: pip
+      run: |
+        python3 -m pip install wheel pip poetry --upgrade
+        python3 -m poetry config virtualenvs.create false
+        python3 -m poetry install
+        pip list
+
+    - name: build
+      run: |
+        python setup.py bdist_wheel
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist-${{ matrix.os }}-${{ matrix.python-version }}
+        path: dist/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: dist-ubuntu-latest-3.8
+        path: ./dist
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/*.whl
+        asset_name: your-package-${{ github.ref }}-${{ matrix.os }}-${{ matrix.python-version }}.whl
+        asset_content_type: application/zip
