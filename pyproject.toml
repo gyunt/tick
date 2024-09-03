@@ -7,7 +7,7 @@ license = "Copyright (c) 2015-2018, the tick developers"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.11"
+python = ">=3.11,<4.0"
 numpy = "<2.0"
 numpydoc = "^1.7.0"
 scipy = "^1.14.0"
@@ -18,7 +18,7 @@ dill = "^0.3.8"
 packaging = "^24.1"
 pyqt5 = "^5.15.11"
 statsmodels = "^0.14.2"
-tensorflow = "<2.17"
+tensorflow = "<2.17.0"
 
 
 [build-system]
